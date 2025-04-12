@@ -12,50 +12,49 @@ git clone https://github.com/brukernavn/ssfixer.git
 cd ssfixer
 
 
-2. Oppsett av virtual environment
+### 2. Oppsett av virtual environment
 For å isolere prosjektets avhengigheter, anbefales det å bruke et virtuelt miljø. Dette kan opprettes og aktiveres med følgende kommandoer:
 
-a) Opprett et virtuelt miljø:
-bash
-Kopier
+#### a) Opprett et virtuelt miljø:
+```bash
+
 python -m venv .venv
-b) Aktiver det virtuelle miljøet:
+
+#### b) Aktiver det virtuelle miljøet:
 På Windows:
 
-bash
-Kopier
+```bash
 .venv\Scripts\activate
-3. Installer nødvendige avhengigheter
+
+### 3. Installer nødvendige avhengigheter
 Når det virtuelle miljøet er aktivert, installerer du alle nødvendige avhengigheter ved å bruke pip:
 
-bash
-Kopier
+```bash
 pip install -r requirements.txt
 Hvis requirements.txt ikke finnes, kan du installere nødvendige biblioteker manuelt (se eksempel nedenfor).
 
-Eksempler på nødvendige biblioteker:
-bash
-Kopier
+#### Eksempler på nødvendige biblioteker:
+```bash
 pip install pandas
 pip install openpyxl
-4. Konfigurasjon med .env
+
+### 4. Konfigurasjon med .env
 Opprett en .env-fil i prosjektmappen for å lagre eventuelle konfigurasjonsinnstillinger. En typisk .env-fil kan inneholde miljøvariabler som f.eks. filbaner, API-nøkler eller annen viktig informasjon.
 
 Eksempel på en .env-fil:
 
-env
-Kopier
+```bash
 DATA_PATH=./data
 LOGGING_LEVEL=INFO
-5. Kjøre programmet
+
+### 5. Kjøre programmet
 Programmet kan kjøres ved å bruke Python, og det er laget for å prosessere Steady State-data gjennom tre pass (Pass 1, Pass 2, Pass 3):
 
-bash
-Kopier
+```bash
 python validator.py
 Dette vil prosessere alle relevante filer i ./data katalogen og bruke de definisjonene og korrigeringene som er spesifisert i filene.
 
-Beskrivelse av filene
+### Beskrivelse av filene
 validator.py
 Hovedprogrammet som styrer hele validerings- og prosesseringsprosessen. Programmet bruker funksjoner fra andre moduler for å prosessere Steady State-rapportene.
 
