@@ -124,31 +124,26 @@ Denne filen håndterer pass 3 i en prosess som involverer validering av kundens 
 Filens hovedfunksjon er prosesserings- og valideringsoperasjoner på kundens filer etter at de har blitt behandlet i tidligere trinn. Det gjøres på følgende måte:
 
 - Mappestruktur og Filhåndtering:
-
--- Koden navigerer gjennom mappene reports og META-INF som er en del av kundens prosesserte data.
--- For hver JSON-fil som finnes i TAXONOMY_DIR (som inneholder spesifikasjonene for DORA 4.0), ser den etter tilsvarende CSV-fil i reports-mappen.
--- Det benyttes en case-insensitive søkefunksjon (find_csv_insensitive) for å finne CSV-filen, som gjør at den finner filen uavhengig av små og store bokstaver i filnavnet.
+  - Koden navigerer gjennom mappene reports og META-INF som er en del av kundens prosesserte data.
+  - For hver JSON-fil som finnes i TAXONOMY_DIR (som inneholder spesifikasjonene for DORA 4.0), ser den etter tilsvarende CSV-fil i reports-mappen.
+  - Det benyttes en case-insensitive søkefunksjon (find_csv_insensitive) for å finne CSV-filen, som gjør at den finner filen uavhengig av små og store bokstaver i filnavnet.
 
 - Validering mot DORA 4.0 Taxonomi:
-
--- Når de relevante filene er funnet, leses JSON-definisjonen som beskriver strukturen og reglene for validering.
--- Et ekstra sett med etiketter (labels) kan også lastes inn fra en tilhørende XML-fil som beskriver feltene på en mer forståelig måte (dette er nyttig for feilmeldingene som genereres senere).
--- Koden sjekker om filen kan inneholde tomme felter ved å analysere filens navn. Hvis navnet indikerer at tomme verdier er tillatt (som for noen spesifikke CSV-filer), justeres valideringen for dette.
+  - Når de relevante filene er funnet, leses JSON-definisjonen som beskriver strukturen og reglene for validering.
+  - Et ekstra sett med etiketter (labels) kan også lastes inn fra en tilhørende XML-fil som beskriver feltene på en mer forståelig måte (dette er nyttig for feilmeldingene som genereres senere).
+  - Koden sjekker om filen kan inneholde tomme felter ved å analysere filens navn. Hvis navnet indikerer at tomme verdier er tillatt (som for noen spesifikke CSV-filer), justeres valideringen for dette.
 
 - Validering med validate_csv_against_schema:
+  - Funksjonen validate_csv_against_schema kalles for å validere hver fil i henhold til DORA 4.0-reglene som er lastet inn fra JSON-filen.
+  - Hvis valideringen gir feil (f.eks. uoverensstemmelser med DORA 4.0-reglene), blir disse feilene logget via logger-instansen. For hver feil gir loggen en detaljert beskrivelse av hva som er galt.
+  - Hvis valideringen ikke gir noen feil, blir det logget at valideringen er fullført uten problemer.
 
-Funksjonen validate_csv_against_schema kalles for å validere hver fil i henhold til DORA 4.0-reglene som er lastet inn fra JSON-filen.
-
--- Hvis valideringen gir feil (f.eks. uoverensstemmelser med DORA 4.0-reglene), blir disse feilene logget via logger-instansen. For hver feil gir loggen en detaljert beskrivelse av hva som er galt.
--- Hvis valideringen ikke gir noen feil, blir det logget at valideringen er fullført uten problemer.
 - Feilhåndtering:
-
--- Koden håndterer potensielle feil under prosesseringen ved å bruke en try-except blokk, som fanger opp eventuelle problemer med filhåndtering, JSON-lasting, eller validering og logger dem som feilmeldinger.
+  - Koden håndterer potensielle feil under prosesseringen ved å bruke en try-except blokk, som fanger opp eventuelle problemer med filhåndtering, JSON-lasting, eller validering og logger dem som feilmeldinger.
 
 - Ekstra Funksjoner:
-
--- load_json_definition: Denne funksjonen åpner og laster JSON-definisjonen som inneholder spesifikasjonene for validering.
--- find_csv_insensitive: Denne funksjonen søker etter en CSV-fil i en katalog, uavhengig av om filnavnet er skrevet med store eller små bokstaver.
+  - load_json_definition: Denne funksjonen åpner og laster JSON-definisjonen som inneholder spesifikasjonene for validering.
+  - find_csv_insensitive: Denne funksjonen søker etter en CSV-fil i en katalog, uavhengig av om filnavnet er skrevet med store eller små bokstaver.
 
 #### Loggføring og Sporing
 All aktivitet blir logget ved hjelp av loggeren som er overført som parameter i funksjonen:
