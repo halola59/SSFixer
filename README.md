@@ -68,6 +68,25 @@ Hovedprogrammet som styrer hele validerings- og prosesseringsprosessen. Programm
 - Pass 2: Korrigerer eventuelle feil og mangler i filene basert på EU-reguleringene.
 - Pass 3: Verifiserer filene mot DORA 4.0 taxonomi.
 
+**process_customer_files_pass1.py**
+
+Denne metoden rydder opp i filer som er lagret i "META-INF" og "reports" for hver kunde i prosjektet. Prosessen skjer i flere trinn:
+
+- Opprette nødvendige mapper: Først sørger koden for at hovedmappen for den nye katalogen (customer_path_p1) eksisterer, og oppretter den hvis den ikke finnes. Dette er mappen der de rensede filene skal lagres.
+
+- Iterasjon gjennom undermapper: Deretter går programmet gjennom alle kundens filer i de to relevante undermappene ("META-INF" og "reports"). For hver av disse undermappene sjekker den om mappen eksisterer. Hvis den gjør det, går koden videre til å prosessere innholdet i mappen.
+
+- Opprette undersmapper i den nye katalogen: I hver av de to undermappene opprettes en tilsvarende undermappe i den nye katalogen (customer_path_p1), hvis den ikke allerede finnes.
+
+- Filbehandling – Rensing av filer: For hver fil i undermappene, åpnes filen, og den prosesseres ved hjelp av funksjonen clean_file. Denne funksjonen fjerner både tomme linjer og duplikatlinjer fra filene.
+
+- Lagring av rensede filer: Etter at filene er renset, lagres de i den nye katalogen (customer_path_p1), som gjør at de opprinnelige filene forblir intakte, og de rensede versjonene kan brukes videre i prosessen.
+
+- Logging og feilhåndtering: Hele prosessen logges for å gi oversikt over hva som skjer. Hvis det oppstår en feil under behandlingen av filene, logges feilen med en feilmelding som hjelper utvikleren eller brukeren å forstå hva som gikk galt.
+
+Totalt sett håndterer denne koden filene for hver kunde, sørger for at nødvendige mapper opprettes i den nye katalogen, og sørger for at alle dataene i filene er renset fra unødvendige linjer før de lagres på nytt for videre behandling.
+
+
 **fix_01_02.py til fix_07_01.py**
 Disse filene inneholder funksjoner som er ansvarlige for spesifikke korrigeringer som kreves i Steady State-rapportene. Hver fil tar for seg et sett med regler og logikk for å endre eller korrigere feltene i CSV-filene.
 
