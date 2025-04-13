@@ -113,7 +113,10 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger, clogger=None):
         # Finn radene i b_02.01 hvor c0140 er tom
         clogger.info(f"B_02.02_pass2: Finner rader hvor c0140 er tom")
         rows_b02_with_empty_c0140 = df_b02[df_b02['c0140'].isna() | (df_b02['c0140'] == '')]
-
+        
+        for index, row in rows_b02_with_empty_c0140.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0140 er tom, vil fylle med verdi fra b_06.01")
+            
         # For hver rad med tom c0140 i b_02.01, fyll den med verdien fra b_06.01
         for index, row in rows_b02_with_empty_c0140.iterrows():
             matching_row_b06 = df_b06[df_b06['c0010'] == row['c0050']]  # Forbindelsen mellom b_06 og b_02 er via hhv c0010 og c0050
@@ -124,7 +127,10 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger, clogger=None):
         # Finn radene i b_02.02 hvor c0170 er tom (NaN eller tom verdi)
         clogger.info(f"B_02.02_pass2: Finner rader hvor c0170 er tom")
         rows_b02_with_empty_c0170 = df_b02[df_b02['c0170'].isna() | (df_b02['c0170'] == '')]
-
+        
+        for index, row in rows_b02_with_empty_c0170.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0170 er tom, vil oppdatere basert på c0100 i b_06.01")
+            
         # For hver rad med tom c0170 i b_02.02, oppdater den med riktig verdi basert på c0100 i b_06.01
         for index, row in rows_b02_with_empty_c0170.iterrows():
             matching_row_b06 = df_b06[df_b06['c0010'] == row['c0050']]  # Forbindelsen mellom b_06 og b_02 er via c0010 og c0050
