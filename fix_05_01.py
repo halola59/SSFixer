@@ -53,15 +53,15 @@ def fix_05_01(input_file_path, alogger, clogger=None):
         temp_output_file_path = f"{input_file_path}.temp"
         df.to_csv(temp_output_file_path, index=False)
 
-        clogger.info(f"B_05.01: Filen er renset og lagret som: {temp_output_file_path}")
+        alogger.info(f"B_05.01: Filen er renset og lagret som: {temp_output_file_path}")
 
         # Slett original fil etter rensing
         os.remove(input_file_path)
-        clogger.info(f"B_05.01: Originalfilen {input_file_path} er slettet.")
+        alogger.info(f"B_05.01: Originalfilen {input_file_path} er slettet.")
 
         # Gi den rensede filen originalt navn
         os.rename(temp_output_file_path, input_file_path)
-        clogger.info(f"B_05.01: Renset fil er omdøpt tilbake til {input_file_path}")
-    
+        alogger.info(f"B_05.01: Renset fil er omdøpt tilbake til {input_file_path}")
+
     except Exception as e:
         print(f"Feil ved behandling av fil {input_file_path}: {e}")
