@@ -1,44 +1,59 @@
 import os
 import pandas as pd
 
-def fix_02_01(input_file_path, logger):
+def fix_02_01(input_file_path, alogger, clogger):
     try:
         # Les inn CSV-filen
         df = pd.read_csv(input_file_path)
 
-        # Fyll c0050 med 0 hvis den er tom (NaN eller tom verdi)
+        # 1. Finn og logg alle rader hvor c0050 er tom
+        rows_with_empty_c0050 = df[df['c0050'].isna() | (df['c0050'] == '')]
+        for index, row in rows_with_empty_c0050.iterrows():
+            clogger.info(f"B_02.01: Rad {index} har tom c0050. Verdien er satt til 0.")        
         df['c0050'] = df['c0050'].fillna(0)
 
-        # Erstatt "Not Applicable" med tomt felt i c0030 (uavhengig av stor/liten bokstav)
+        # 2. Finn og logg alle rader der c0030 er "Not Applicable" (uavhengig av stor/liten bokstav)
+        df['c0030'] = df['c0030'].fillna('')  # Erstatt NaN med tomt felt først
+        df['c0030'] = df['c0030'].astype(str)  # Konverterer til strenger
+        rows_with_not_applicable_c0030 = df[df['c0030'].str.contains("Not Applicable", case=False, na=False)]
+        for index, row in rows_with_not_applicable_c0030.iterrows():
+            clogger.info(f"B_02.01: Rad {index} med 'NA' i c0030 ble satt til tomt.")
         df['c0030'] = df['c0030'].replace({"not applicable": "", "Not Applicable": "", "Not applicable": ""}, regex=True)
 
-        # Erstatt beløp skrevet som tekst med mellomrom, f.eks. "914 321" skal bli 914321
-        # Fjern mellomrom fra tall i c0050 (kun numeriske verdier)
+        # 3. Erstatt beløp skrevet som tekst med mellomrom, f.eks. "914 321" skal bli 914321, fjern mellomrom fra tall i c0050
+        df['c0050'] = df['c0050'].astype(str)
+        rows_with_spaces_in_c0050 = df[df['c0050'].str.contains(r'\s+', regex=True, na=False)]
+        for index, row in rows_with_spaces_in_c0050.iterrows():
+            clogger.info(f"B_02.01: Rad {index} hadde mellomrom i c0050, verdien ble endret.")
         df['c0050'] = df['c0050'].replace({r'\s+': ''}, regex=True)
 
-        # Konverter kolonne c0050 til numerisk, slik at eventuelle tekstverdier blir håndtert som tall
+        # 4. Finn og logg alle rader hvor c0050 ikke er numerisk, konverter kolonne c0050 til numerisk
+        rows_with_non_numeric_c0050 = df[~df['c0050'].apply(lambda x: x.replace('.', '', 1).isdigit())]
+
+        for index, row in rows_with_non_numeric_c0050.iterrows():
+            clogger.info(f"B_02.01: Rad {index} hadde ikke-numerisk verdi i c0050, ble endret til 0.")
         df['c0050'] = pd.to_numeric(df['c0050'], errors='coerce').fillna(0).astype(int)
 
-        # Fjern linjer der c0020 er 'eba_CO:x3' og c0030 er tom
-        df = df[~((df['c0020'] == 'eba_CO:x3') & (df['c0030'].isna() | (df['c0030'] == '')))]
+        # 5. Finn rader der c0020 er 'eba_CO:x3' og c0030 er tom eller c0030 ikke finnes i c0010
+        condition = (df['c0020'] == 'eba_CO:x3') & (
+            (df['c0030'].isna() | (df['c0030'] == '')) | (~df['c0030'].isin(df['c0010']))
+        )
+        rows_to_remove = df[condition]
+        for index, row in rows_to_remove.iterrows():
+            clogger.info(f"B_02.01: Rad {index} fjernes, c0020={row['c0020']} og c0030={row['c0030']} eksisterer ikke i c0010.")
+        df_cleaned = df[~condition]
 
         # Lagre den rensede filen til midlertidig output-filbane
         temp_output_file_path = f"{input_file_path}.temp"
-        df.to_csv(temp_output_file_path, index=False)
-
-        logger.info(f"Filen er renset og lagret som: {temp_output_file_path}")
+        df_cleaned.to_csv(temp_output_file_path, index=False)
 
         # Slett original fil etter rensing
         os.remove(input_file_path)
-        logger.info(f"Originalfilen {input_file_path} er slettet.")
+        #alogger.info(f"Originalfilen {input_file_path} er slettet.")
 
         # Gi den rensede filen originalt navn
         os.rename(temp_output_file_path, input_file_path)
-        logger.info(f"Renset fil er omdøpt tilbake til {input_file_path}")
-    
+        alogger.info(f"Ferdig med rensing av fil: {input_file_path}")
+
     except Exception as e:
-        print(f"fix_02_01: Feil ved behandling av fil {input_file_path}: {e}")
-
-
-
-
+        alogger.error(f"EXCEPTION - fix_02_01: Fil {input_file_path}: {e}")

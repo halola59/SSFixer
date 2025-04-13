@@ -2,7 +2,7 @@ import os
 import shutil
 import logging
 
-def process_customer_files_pass1(customer_path, customer_path_p1, logger):
+def process_customer_files_pass1(customer_path, customer_path_p1, alogger, clogger):
     """
     Lager en kopi av katalogen, fjerner tomme linjer og duplikater fra filene,
     og lagrer dem i den nye katalogen.
@@ -24,20 +24,20 @@ def process_customer_files_pass1(customer_path, customer_path_p1, logger):
 
                 for filename in os.listdir(subfolder_path):
                     input_file_path = os.path.join(subfolder_path, filename)
-                    logger.info(f"Prosesserer fil: {input_file_path}")
+                    alogger.info(f"Prosesserer fil: {input_file_path}")
 
                     if os.path.isfile(input_file_path):
                         # Lag output filbane i .P1 katalogen
                         output_file_path = os.path.join(subfolder_output_path, filename)
 
                         # Rens filen
-                        clean_file(input_file_path, output_file_path, logger)
+                        clean_file(input_file_path, output_file_path, alogger)
 
     except Exception as e:
-        logger.error(f"Feil ved prosessering av katalog {customer_path}: {e}")
+        alogger.error(f"Feil ved prosessering av katalog {customer_path}: {e}")
 
 
-def clean_file(input_file_path, output_file_path, logger):
+def clean_file(input_file_path, output_file_path, alogger):
     """
     Fjerner tomme linjer og duplikat linjer fra en fil og lagrer resultatet i en ny fil.
     """
@@ -55,6 +55,6 @@ def clean_file(input_file_path, output_file_path, logger):
         with open(output_file_path, 'w', encoding='utf-8') as outfile:
             outfile.writelines(cleaned_lines)
 
-        logger.info(f"Renset fil lagret: {output_file_path}")
+        alogger.info(f"Renset fil lagret: {output_file_path}")
     except Exception as e:
-        logger.error(f"Feil ved behandling av fil {input_file_path}: {e}")
+        alogger.error(f"Feil ved behandling av fil {input_file_path}: {e}")

@@ -1,8 +1,9 @@
 import os
 import pandas as pd
 import logging
+from datetime import datetime, timedelta
 
-def fix_02_02(input_file_path, logger):
+def fix_02_02(input_file_path, alogger, clogger):
     try:
         # Les inn CSV-filen
         df = pd.read_csv(input_file_path)
@@ -10,6 +11,25 @@ def fix_02_02(input_file_path, logger):
         # Hvis c0090 er tom, sett inn 'eba_CO:x4'
         df['c0090'] = df['c0090'].fillna('eba_CO:x4')
 
+        # 1. Finn og logg alle rader der c0080 er mindre enn c0070, Logg rader som trenger korrigering
+        not_maxdate_condition = df['c0080'] != '31-12-9999'
+        filtered_df = df[not_maxdate_condition].copy()
+
+        filtered_df['c0070'] = filtered_df['c0070'].apply(pd.to_datetime, errors='coerce')
+        filtered_df['c0080'] = filtered_df['c0080'].apply(pd.to_datetime, errors='coerce')
+
+        condition = filtered_df['c0080'] < filtered_df['c0070']
+        rows_to_correct = filtered_df[condition]
+
+        for index, row in rows_to_correct.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0080 ({row['c0080']}) < c0070 ({row['c0070']}), endrer c0080 til c0070 + 1.")
+
+        filtered_df.loc[condition, 'c0080'] = filtered_df['c0070'] + pd.Timedelta(days=1)
+        filtered_df['c0070'] = filtered_df['c0070'].dt.strftime('%Y-%m-%d')
+        filtered_df['c0080'] = filtered_df['c0080'].dt.strftime('%Y-%m-%d')
+
+        df.update(filtered_df)
+    
         # Hvis c0100 er tom, sett verdi = 90
         df['c0100'] = df['c0100'].fillna(90)
 
@@ -44,21 +64,21 @@ def fix_02_02(input_file_path, logger):
         temp_output_file_path = f"{input_file_path}.temp"
         df.to_csv(temp_output_file_path, index=False)
 
-        logger.info(f"Filen er renset og lagret som: {temp_output_file_path}")
+        alogger.info(f"Filen er renset og lagret som: {temp_output_file_path}")
 
         # Slett original fil etter rensing
         os.remove(input_file_path)
-        logger.info(f"Originalfilen {input_file_path} er slettet.")
+        alogger.info(f"Originalfilen {input_file_path} er slettet.")
 
         # Gi den rensede filen originalt navn
         os.rename(temp_output_file_path, input_file_path)
-        logger.info(f"Renset fil er omdøpt tilbake til {input_file_path}")
+        alogger.info(f"Renset fil er omdøpt tilbake til {input_file_path}")
     
     except Exception as e:
-        print(f"Feil ved behandling av fil {input_file_path}: {e}")
+        print(f"EXCEPTION - fix_02_02: {input_file_path}: {e}")
 
 
-def fix_02_02_pass2(input_file_b02, input_file_b06, logger):
+def fix_02_02_pass2(input_file_b02, input_file_b06, alogger):
     try:
         # Les inn CSV-filene
         df_b02 = pd.read_csv(input_file_b02)
@@ -92,22 +112,22 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, logger):
         temp_output_file_b02 = f"{input_file_b02}.temp"
         df_b02.to_csv(temp_output_file_b02, index=False)
 
-        logger.info(f"Filen b_02.01 er renset og lagret som: {temp_output_file_b02}")
+        alogger.info(f"Filen b_02.01 er renset og lagret som: {temp_output_file_b02}")
 
         # Slett original b_02.01 fil etter rensing
         os.remove(input_file_b02)
-        logger.info(f"Originalfilen {input_file_b02} er slettet.")
+        alogger.info(f"Originalfilen {input_file_b02} er slettet.")
 
         # Gi den rensede b_02.01 filen originalt navn
         os.rename(temp_output_file_b02, input_file_b02)
-        logger.info(f"Renset b_02.01 fil er omdøpt tilbake til {input_file_b02}")
+        alogger.info(f"Renset b_02.01 fil er omdøpt tilbake til {input_file_b02}")
     
     except Exception as e:
         print(f"Feil ved behandling av filene {input_file_b02} og {input_file_b06}: {e}")
 
 
 
-def fix_02_02_pass3(input_file_b0202, input_file_b0501, logger):
+def fix_02_02_pass3(input_file_b0202, input_file_b0501, alogger):
     try:
         # Les inn CSV-filene
         df_b0501 = pd.read_csv(input_file_b0501)
@@ -128,11 +148,11 @@ def fix_02_02_pass3(input_file_b0202, input_file_b0501, logger):
 
         # Slett original b_02_02 fil etter rensing
         os.remove(input_file_b0202)
-        logger.info(f"Originalfilen {input_file_b0202} er slettet.")
+        alogger.info(f"Originalfilen {input_file_b0202} er slettet.")
 
         # Gi den rensede b_02_02 filen originalt navn
         os.rename(temp_output_file_b0202, input_file_b0202)
-        logger.info(f"Renset b_02_02 fil er omdøpt tilbake til {input_file_b0202}")
+        alogger.info(f"Renset b_02_02 fil er omdøpt tilbake til {input_file_b0202}")
     
     except Exception as e:
         print(f"Feil ved behandling av filene {input_file_b0202} og {input_file_b0501}: {e}")
