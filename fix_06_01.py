@@ -2,14 +2,14 @@ import pandas as pd
 import os
 import logging
 
-def fix_06_01(input_file_path, logger, clogger=None):
+def fix_06_01(input_file_path, alogger, clogger=None):
     try:
         # Les inn CSV-filen
         df = pd.read_csv(input_file_path)
 
         # Endre overskriften fra "c0010,c0020,c0030,c0040,c0060,c0070,c0080,c0090,c0100,c0110"
         # til "c0010,c0020,c0030,c0040,c0050,c0060,c0070,c0080,c0090,c0100"
-        clogger.info(f"B_06.01: Endrer kolonneoverskrifter til standard format.")
+        alogger.info(f"B_06.01: Endrer kolonneoverskrifter til standard format.")
         new_columns = ["c0010", "c0020", "c0030", "c0040", "c0050", "c0060", "c0070", "c0080", "c0090", "c0100"]
         df.columns = new_columns
 

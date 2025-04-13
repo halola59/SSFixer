@@ -2,13 +2,13 @@ import os
 import pandas as pd
 
 
-def fix_01_02(input_file_path, logger, clogger=None):
+def fix_01_02(input_file_path, alogger, clogger=None):
     try:
         df = pd.read_csv(input_file_path)
 
         rows_with_empty_c0060 = df[df['c0060'].isna()]
         for index, row in rows_with_empty_c0060.iterrows():
-            clogger.info(f"B_01.02: Rad {index} - c0060 er tom, kopierer verdi fra c0010 ('{row['c0010']}').")
+            alogger.info(f"B_01.02: Rad {index} - c0060 er tom, kopierer verdi fra c0010 ('{row['c0010']}').")
         df['c0060'] = df['c0060'].fillna(df['c0010'])
 
         rows_with_spaces_in_c0110 = df[df['c0110'].astype(str).str.contains(r'\s+')]

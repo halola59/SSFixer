@@ -22,7 +22,7 @@ def fix_02_02(input_file_path, alogger, clogger):
         rows_to_correct = filtered_df[condition]
 
         for index, row in rows_to_correct.iterrows():
-            clogger.info(f"B_02.02: Rad {index} - c0080 ({row['c0080']}) < c0070 ({row['c0070']}), endrer c0080 til c0070 + 1.")
+            alogger.info(f"B_02.02: Rad {index} - c0080 ({row['c0080']}) < c0070 ({row['c0070']}), endrer c0080 til c0070 + 1.")
 
         filtered_df.loc[condition, 'c0080'] = filtered_df['c0070'] + pd.Timedelta(days=1)
         filtered_df['c0070'] = filtered_df['c0070'].dt.strftime('%Y-%m-%d')
