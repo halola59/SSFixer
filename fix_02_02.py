@@ -43,6 +43,9 @@ def fix_02_02(input_file_path, alogger, clogger):
         df['c0030'] = df['c0030'].str.strip()
 
         # Hvis c0110 er tom, sett verdi = c0100
+        rows_with_empty_c0110 = df[df['c0110'].isna()]
+        for index, row in rows_with_empty_c0110.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0110 er tom, setter verdi til c0100 ({row['c0100']}).")
         df['c0110'] = df['c0110'].fillna(df['c0100'])
 
         # Hvis c0150 er tom og c0140 er tom, kopier verdien fra c0130 til c0150
