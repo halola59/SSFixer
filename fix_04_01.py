@@ -8,9 +8,15 @@ def fix_04_01(input_file_path, logger):
         df = pd.read_csv(input_file_path)
 
         # Hvis c0020 er tom, slett hele linjen
+        rows_with_empty_c0020 = df[df['c0020'].isna() | (df['c0020'] == '')]
+        for index, row in rows_with_empty_c0020.iterrows():
+            logger.info(f"B_04.01: Rad {index} - c0020 er tom, sletter raden.")
         df = df[df['c0020'].notna() & (df['c0020'] != '')]
 
         # Fjern alle duplikatrader
+        duplicate_rows = df[df.duplicated(keep=False)]
+        for index, row in duplicate_rows.iterrows():
+            logger.info(f"B_04.01: Rad {index} - duplikatrad, sletter duplikatet.")
         df = df.drop_duplicates()
 
         # Lagre den rensede filen til midlertidig output-filbane
