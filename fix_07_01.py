@@ -45,6 +45,6 @@ def fix_07_01(input_file_path, alogger, clogger=None):
         # Gi den rensede filen originalt navn
         os.rename(temp_output_file_path, input_file_path)
         alogger.info(f"B_07.01: Renset fil er omdøpt tilbake til {input_file_path}")
-    
+
     except Exception as e:
         print(f"Feil ved behandling av fil {input_file_path}: {e}")
