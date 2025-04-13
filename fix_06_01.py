@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import logging
 
-def fix_06_01(input_file_path, logger):
+def fix_06_01(input_file_path, logger, clogger=None):
     try:
         # Les inn CSV-filen
         df = pd.read_csv(input_file_path)

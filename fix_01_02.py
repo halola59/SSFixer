@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 
-def fix_01_02(input_file_path, logger):
+def fix_01_02(input_file_path, logger, clogger=None):
     try:
         df = pd.read_csv(input_file_path)
 
@@ -24,3 +24,5 @@ def fix_01_02(input_file_path, logger):
 
     except Exception as e:
         print(f"fix_01_02: Feil ved behandling av fil {input_file_path}: {e}")
+
+
