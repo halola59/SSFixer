@@ -49,12 +49,17 @@ def fix_02_02(input_file_path, alogger, clogger):
         df['c0110'] = df['c0110'].fillna(df['c0100'])
 
         # Hvis c0150 er tom og c0140 er tom, kopier verdien fra c0130 til c0150
+        rows_with_empty_c0150_c0140 = df[df['c0150'].isna() & df['c0140'].isna()]
+        for index, row in rows_with_empty_c0150_c0140.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0150 og c0140 er tomme, kopierer verdi fra c0130 ({row['c0130']}) til c0150.")
         df.loc[df['c0150'].isna() & df['c0140'].isna(), 'c0150'] = df['c0130']
 
         # Finn radene der c0140 er 'eba_BT:x29' og c0150 er tom
         condition = (df['c0140'] == 'eba_BT:x29') & (df['c0150'].isna() | (df['c0150'] == ''))
+        rows_to_set_not_applicable = df[condition]
+        for index, row in rows_to_set_not_applicable.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0140 er 'eba_BT:x29' og c0150 er tom, setter c0150 til 'eba_GA:x28'.")
 
-        # Sett c0100 til 'Not applicable' for de radene som oppfyller betingelsene
         df.loc[condition, 'c0150'] = 'eba_GA:x28'
 
         # Hvis c0160 er tom, kopier verdien fra c0130 til c0160
