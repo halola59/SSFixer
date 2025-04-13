@@ -32,15 +32,15 @@ def fix_06_01(input_file_path, alogger, clogger=None):
             df['c0040'].fillna(fill_value, inplace=True)
 
         # Kombiner c0010 og c0040 for å sikre at det er unikt per rad
-        clogger.info(f"B_06.01: Oppretter kombinasjonsfelt 'c0010_c0040_combination' for å identifisere duplikater.")
+        alogger.info(f"B_06.01: Oppretter kombinasjonsfelt 'c0010_c0040_combination' for å identifisere duplikater.")
         df['c0010_c0040_combination'] = df['c0010'] + df['c0040']
 
         # Sjekk for duplikater i kombinasjonen c0010 + c0040
         duplicates = df[df.duplicated(subset=['c0010_c0040_combination'], keep=False)]
 
         if not duplicates.empty:
-            clogger.info(f"B_06.01: Duplikater funnet i kombinasjonen 'c0010 + c0040':")
-            clogger.info(f"B_06.01: {duplicates[['c0010', 'c0040', 'c0010_c0040_combination']]}")
+            alogger.info(f"B_06.01: Duplikater funnet i kombinasjonen 'c0010 + c0040':")
+            alogger.info(f"B_06.01: {duplicates[['c0010', 'c0040', 'c0010_c0040_combination']]}")
 
             # Hvis du ønsker å fjerne duplikater, kan vi gjøre dette
             for index, row in duplicates.iterrows():
@@ -51,15 +51,15 @@ def fix_06_01(input_file_path, alogger, clogger=None):
         temp_output_file_path = f"{input_file_path}.temp"
         df.to_csv(temp_output_file_path, index=False)
 
-        clogger.info(f"B_06.01: Filen er renset og lagret som: {temp_output_file_path}")
+        alogger.info(f"B_06.01: Filen er renset og lagret som: {temp_output_file_path}")
 
         # Slett original fil etter rensing
         os.remove(input_file_path)
-        clogger.info(f"B_06.01: Originalfilen {input_file_path} er slettet.")
+        alogger.info(f"B_06.01: Originalfilen {input_file_path} er slettet.")
 
         # Gi den rensede filen originalt navn
         os.rename(temp_output_file_path, input_file_path)
-        clogger.info(f"B_06.01: Renset fil er omdøpt tilbake til {input_file_path}")
+        alogger.info(f"B_06.01: Renset fil er omdøpt tilbake til {input_file_path}")
     
     except Exception as e:
         print(f"Feil ved behandling av fil {input_file_path}: {e}")
