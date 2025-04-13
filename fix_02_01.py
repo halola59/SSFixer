@@ -9,7 +9,7 @@ def fix_02_01(input_file_path, alogger, clogger):
         # 1. Finn og logg alle rader hvor c0050 er tom
         rows_with_empty_c0050 = df[df['c0050'].isna() | (df['c0050'] == '')]
         for index, row in rows_with_empty_c0050.iterrows():
-            alogger.info(f"B_02.01: Rad {index} har tom c0050. Verdien er satt til 0.")
+            clogger.info(f"B_02.01: Rad {index} har tom c0050. Verdien er satt til 0.")
         df['c0050'] = df['c0050'].fillna(0)
 
         # 2. Finn og logg alle rader der c0030 er "Not Applicable" (uavhengig av stor/liten bokstav)

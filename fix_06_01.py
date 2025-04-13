@@ -9,7 +9,7 @@ def fix_06_01(input_file_path, alogger, clogger=None):
 
         # Endre overskriften fra "c0010,c0020,c0030,c0040,c0060,c0070,c0080,c0090,c0100,c0110"
         # til "c0010,c0020,c0030,c0040,c0050,c0060,c0070,c0080,c0090,c0100"
-        alogger.info(f"B_06.01: Endrer kolonneoverskrifter til standard format.")
+        clogger.info(f"B_06.01: Endrer kolonneoverskrifter til standard format.")
         new_columns = ["c0010", "c0020", "c0030", "c0040", "c0050", "c0060", "c0070", "c0080", "c0090", "c0100"]
         df.columns = new_columns
 
