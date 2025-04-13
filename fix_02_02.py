@@ -22,7 +22,7 @@ def fix_02_02(input_file_path, alogger, clogger):
         rows_to_correct = filtered_df[condition]
 
         for index, row in rows_to_correct.iterrows():
-            alogger.info(f"B_02.02: Rad {index} - c0080 ({row['c0080']}) < c0070 ({row['c0070']}), endrer c0080 til c0070 + 1.")
+            clogger.info(f"B_02.02: Rad {index} - c0080 ({row['c0080']}) < c0070 ({row['c0070']}), endrer c0080 til c0070 + 1.")
 
         filtered_df.loc[condition, 'c0080'] = filtered_df['c0070'] + pd.Timedelta(days=1)
         filtered_df['c0070'] = filtered_df['c0070'].dt.strftime('%Y-%m-%d')
@@ -104,13 +104,14 @@ def fix_02_02(input_file_path, alogger, clogger):
         print(f"EXCEPTION - fix_02_02: {input_file_path}: {e}")
 
 
-def fix_02_02_pass2(input_file_b02, input_file_b06, alogger):
+def fix_02_02_pass2(input_file_b02, input_file_b06, alogger, clogger=None):
     try:
         # Les inn CSV-filene
         df_b02 = pd.read_csv(input_file_b02)
         df_b06 = pd.read_csv(input_file_b06)
 
         # Finn radene i b_02.01 hvor c0140 er tom
+        clogger.info(f"B_02.02_pass2: Finner rader hvor c0140 er tom")
         rows_b02_with_empty_c0140 = df_b02[df_b02['c0140'].isna() | (df_b02['c0140'] == '')]
 
         # For hver rad med tom c0140 i b_02.01, fyll den med verdien fra b_06.01
@@ -121,6 +122,7 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger):
                 df_b02.at[index, 'c0140'] = matching_row_b06.iloc[0]['c0050']
 
         # Finn radene i b_02.02 hvor c0170 er tom (NaN eller tom verdi)
+        clogger.info(f"B_02.02_pass2: Finner rader hvor c0170 er tom")
         rows_b02_with_empty_c0170 = df_b02[df_b02['c0170'].isna() | (df_b02['c0170'] == '')]
 
         # For hver rad med tom c0170 i b_02.02, oppdater den med riktig verdi basert på c0100 i b_06.01
@@ -153,7 +155,7 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger):
 
 
 
-def fix_02_02_pass3(input_file_b0202, input_file_b0501, alogger):
+def fix_02_02_pass3(input_file_b0202, input_file_b0501, alogger, clogger=None):
     try:
         # Les inn CSV-filene
         df_b0501 = pd.read_csv(input_file_b0501)
