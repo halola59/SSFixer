@@ -8,9 +8,15 @@ def fix_03_01(input_file_path, logger):
         df = pd.read_csv(input_file_path)
 
         # Hvis c0020 er tom, slett hele linjen
+        rows_with_empty_c0020 = df[df['c0020'].isna() | (df['c0020'] == '')]
+        for index, row in rows_with_empty_c0020.iterrows():
+            logger.info(f"B_03.01: Rad {index} - c0020 er tom, sletter raden.")
         df = df[df['c0020'].notna() & (df['c0020'] != '')]
 
         # Sett inn True på alle linjer i c0030
+        for index, row in df.iterrows():
+            if row['c0030'] != 'true':
+                logger.info(f"B_03.01: Rad {index} - setter c0030 til 'true' (var: '{row['c0030']}').")
         df['c0030'] = 'true'
 
         # Lagre den rensede filen til midlertidig output-filbane
