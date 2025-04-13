@@ -63,15 +63,27 @@ def fix_02_02(input_file_path, alogger, clogger):
         df.loc[condition, 'c0150'] = 'eba_GA:x28'
 
         # Hvis c0160 er tom, kopier verdien fra c0130 til c0160
+        rows_with_empty_c0160 = df[df['c0160'].isna()]
+        for index, row in rows_with_empty_c0160.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0160 er tom, kopierer verdi fra c0130 ({row['c0130']}) til c0160.")
         df['c0160'] = df['c0160'].fillna(df['c0130'])
 
         # Slett rader der c0020 er tom
+        rows_with_empty_c0020 = df[df['c0020'].isna() | (df['c0020'] == '')]
+        for index, row in rows_with_empty_c0020.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0020 er tom, sletter raden.")
         df = df[df['c0020'].notna() & (df['c0020'] != '')]
 
         # Slett rader der c0040 er tom
+        rows_with_empty_c0040 = df[df['c0040'].isna() | (df['c0040'] == '')]
+        for index, row in rows_with_empty_c0040.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0040 er tom, sletter raden.")
         df = df[df['c0040'].notna() & (df['c0040'] != '')]
 
         # Slett rader der c0050 er tom
+        rows_with_empty_c0050 = df[df['c0050'].isna() | (df['c0050'] == '')]
+        for index, row in rows_with_empty_c0050.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0050 er tom, sletter raden.")
         df = df[df['c0050'].notna() & (df['c0050'] != '')]
 
         # Lagre den rensede filen til midlertidig output-filbane
