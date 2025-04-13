@@ -10,7 +10,10 @@ def fix_05_01(input_file_path, logger, clogger=None):
         # Fjern leading og trailing spaces fra c0010
         rows_with_spaces_in_c0010 = df[df['c0010'].astype(str).str.strip() != df['c0010'].astype(str)]
         for index, row in rows_with_spaces_in_c0010.iterrows():
-            logger.info(f"B_05.01: Rad {index} - c0010 '{row['c0010']}' har mellomrom, fjerner leading/trailing spaces.")
+            if clogger:
+                clogger.info(f"B_05.01: Rad {index} - c0010 '{row['c0010']}' har mellomrom, fjerner leading/trailing spaces.")
+            else:
+                logger.info(f"B_05.01: Rad {index} - c0010 '{row['c0010']}' har mellomrom, fjerner leading/trailing spaces.")
         df['c0010'] = df['c0010'].str.strip()
 
         # Fjern alle duplikatrader
