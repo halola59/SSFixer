@@ -111,7 +111,7 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger, clogger=None):
         df_b06 = pd.read_csv(input_file_b06)
 
         # Finn radene i b_02.01 hvor c0140 er tom
-        clogger.info(f"B_02.02_pass2: Finner rader hvor c0140 er tom")
+        alogger.info(f"B_02.02_pass2: Finner rader hvor c0140 er tom")
         rows_b02_with_empty_c0140 = df_b02[df_b02['c0140'].isna() | (df_b02['c0140'] == '')]
         
         for index, row in rows_b02_with_empty_c0140.iterrows():
@@ -125,7 +125,7 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger, clogger=None):
                 df_b02.at[index, 'c0140'] = matching_row_b06.iloc[0]['c0050']
 
         # Finn radene i b_02.02 hvor c0170 er tom (NaN eller tom verdi)
-        clogger.info(f"B_02.02_pass2: Finner rader hvor c0170 er tom")
+        alogger.info(f"B_02.02_pass2: Finner rader hvor c0170 er tom")
         rows_b02_with_empty_c0170 = df_b02[df_b02['c0170'].isna() | (df_b02['c0170'] == '')]
         
         for index, row in rows_b02_with_empty_c0170.iterrows():
