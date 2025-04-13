@@ -1,8 +1,0 @@
-c0010,c0020,c0030,c0040,c0050,c0060,c0070,c0080,c0090,c0100
-"F7",eba_TA:x276,"Critical ICT services",894500FORXRTIGU4JV07,eba_BT:x28,"ICT services that are critical to our business operation and maintaining compliance but does not fall in under F1-F5",9999-12-31,1,1,eba_ZZ:x793
-"F1",eba_TA:x228,"Custody and administration",894500FORXRTIGU4JV07,eba_BT:x28,"The function is critical to ensuring our ability to maintain service delivery and remain compliant with regulatory requirements",9999-12-31,1,1,eba_ZZ:x793
-"F2",eba_TA:x231,"Exchange crypto assets for funds",894500FORXRTIGU4JV07,eba_BT:x28,"The function is critical to ensuring our ability to maintain service delivery and remain compliant with regulatory requirements",9999-12-31,1,1,eba_ZZ:x793
-"F3",eba_TA:x232,"Exchange crypto assets to crypto assets",894500FORXRTIGU4JV07,eba_BT:x28,"The function is critical to ensuring our ability to maintain service delivery and remain compliant with regulatory requirements",9999-12-31,1,1,eba_ZZ:x793
-"F4",eba_TA:x236,"Transfer services",894500FORXRTIGU4JV07,eba_BT:x28,"The function is critical to ensuring our ability to maintain service delivery and remain compliant with regulatory requirements",9999-12-31,1,1,eba_ZZ:x793
-"F5",eba_TA:x133,"Reception and transmission  PAY",894500FORXRTIGU4JV07,eba_BT:x28,"The function is critical to ensuring our ability to maintain service delivery and remain compliant with regulatory requirements",9999-12-31,1,1,eba_ZZ:x793
-"F6",eba_TA:x276,"Non critical ICT service",894500FORXRTIGU4JV07,eba_BT:x29,,9999-12-31,0,0,eba_ZZ:x792
