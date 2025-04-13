@@ -157,7 +157,7 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger, clogger=None):
         alogger.info(f"Renset b_02.01 fil er omdøpt tilbake til {input_file_b02}")
 
     except Exception as e:
-        print(f"Feil ved behandling av filene {input_file_b02} og {input_file_b06}: {e}")
+        print(f"EXCEPTION - fix_02_02 {input_file_b02} og {input_file_b06}: {e}")
 
 
 
@@ -189,4 +189,4 @@ def fix_02_02_pass3(input_file_b0202, input_file_b0501, alogger, clogger=None):
         alogger.info(f"Renset b_02_02 fil er omdøpt tilbake til {input_file_b0202}")
 
     except Exception as e:
-        print(f"Feil ved behandling av filene {input_file_b0202} og {input_file_b0501}: {e}")
+        print(f"EXCEPTION - fix_02_02 {input_file_b0202} og {input_file_b0501}: {e}")

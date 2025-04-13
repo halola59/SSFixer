@@ -29,6 +29,6 @@ def fix_01_02(input_file_path, alogger, clogger=None):
         alogger.info(f"B_01.02: Oppdatert fil er omdøpt tilbake til {input_file_path}")
 
     except Exception as e:
-        print(f"fix_01_02: Feil ved behandling av fil {input_file_path}: {e}")
+        print(f"EXCEPTION - fix_01_02: Feil ved behandling av fil {input_file_path}: {e}")
 
 

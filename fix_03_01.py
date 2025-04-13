@@ -34,5 +34,5 @@ def fix_03_01(input_file_path, alogger, clogger=None):
         alogger.info(f"B_03.01: Renset fil er omdøpt tilbake til {input_file_path}")
     
     except Exception as e:
-        print(f"Feil ved behandling av fil {input_file_path}: {e}")
+        print(f"EXCEPTION - fix_03_01 - ved behandling av fil {input_file_path}: {e}")
 
