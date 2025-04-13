@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import logging
 
-def fix_03_01(input_file_path, logger, clogger=None):
+def fix_03_01(input_file_path, alogger, clogger=None):
     try:
         # Les inn CSV-filen
         df = pd.read_csv(input_file_path)
@@ -10,7 +10,7 @@ def fix_03_01(input_file_path, logger, clogger=None):
         # Hvis c0020 er tom, slett hele linjen
         rows_with_empty_c0020 = df[df['c0020'].isna() | (df['c0020'] == '')]
         for index, row in rows_with_empty_c0020.iterrows():
-            clogger.info(f"B_03.01: Rad {index} - c0020 er tom, sletter raden.")
+            alogger.info(f"B_03.01: Rad {index} - c0020 er tom, sletter raden.")
         df = df[df['c0020'].notna() & (df['c0020'] != '')]
 
         # Sett inn True på alle linjer i c0030

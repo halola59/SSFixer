@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import logging
 
-def fix_03_02(input_file_path, logger, clogger=None):
+def fix_03_02(input_file_path, alogger, clogger=None):
     try:
         # Les inn CSV-filen
         df = pd.read_csv(input_file_path)
@@ -10,7 +10,7 @@ def fix_03_02(input_file_path, logger, clogger=None):
         # Fjern leading og trailing spaces fra c0020
         rows_with_spaces_in_c0020 = df[df['c0020'].astype(str).str.strip() != df['c0020'].astype(str)]
         for index, row in rows_with_spaces_in_c0020.iterrows():
-            clogger.info(f"B_03.02: Rad {index} - c0020 '{row['c0020']}' har mellomrom, fjerner leading/trailing spaces.")
+            alogger.info(f"B_03.02: Rad {index} - c0020 '{row['c0020']}' har mellomrom, fjerner leading/trailing spaces.")
         df['c0020'] = df['c0020'].str.strip()
 
         # Fjern linjer der c0020 er tom (NaN eller tom verdi)

@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import logging
 
-def fix_05_01(input_file_path, logger, clogger=None):
+def fix_05_01(input_file_path, alogger, clogger=None):
     try:
         # Les inn CSV-filen
         df = pd.read_csv(input_file_path)
@@ -10,7 +10,7 @@ def fix_05_01(input_file_path, logger, clogger=None):
         # Fjern leading og trailing spaces fra c0010
         rows_with_spaces_in_c0010 = df[df['c0010'].astype(str).str.strip() != df['c0010'].astype(str)]
         for index, row in rows_with_spaces_in_c0010.iterrows():
-            clogger.info(f"B_05.01: Rad {index} - c0010 '{row['c0010']}' har mellomrom, fjerner leading/trailing spaces.")
+            alogger.info(f"B_05.01: Rad {index} - c0010 '{row['c0010']}' har mellomrom, fjerner leading/trailing spaces.")
         df['c0010'] = df['c0010'].str.strip()
 
         # Fjern alle duplikatrader
