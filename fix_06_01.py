@@ -9,17 +9,14 @@ def fix_06_01(input_file_path, logger, clogger=None):
 
         # Endre overskriften fra "c0010,c0020,c0030,c0040,c0060,c0070,c0080,c0090,c0100,c0110"
         # til "c0010,c0020,c0030,c0040,c0050,c0060,c0070,c0080,c0090,c0100"
-        if clogger:
-            clogger.info(f"B_06.01: Endrer kolonneoverskrifter til standard format.")
-        else:
-            logger.info(f"B_06.01: Endrer kolonneoverskrifter til standard format.")
+        clogger.info(f"B_06.01: Endrer kolonneoverskrifter til standard format.")
         new_columns = ["c0010", "c0020", "c0030", "c0040", "c0050", "c0060", "c0070", "c0080", "c0090", "c0100"]
         df.columns = new_columns
 
         # Fjern alle mellomrom i c0010 (men behold teksten)
         rows_with_spaces_in_c0010 = df[df['c0010'].astype(str).str.contains(r'\s+')]
         for index, row in rows_with_spaces_in_c0010.iterrows():
-            logger.info(f"B_06.01: Rad {index} - c0010 '{row['c0010']}' har mellomrom, fjerner alle mellomrom.")
+            clogger.info(f"B_06.01: Rad {index} - c0010 '{row['c0010']}' har mellomrom, fjerner alle mellomrom.")
         df['c0010'] = df['c0010'].astype(str).replace(r'\s+', '', regex=True)
 
         # Hent verdier fra de radene der c0040 er fylt ut
@@ -31,38 +28,38 @@ def fix_06_01(input_file_path, logger, clogger=None):
             fill_value = c0040_values[0]
             rows_with_empty_c0040 = df[df['c0040'].isna()]
             for index, row in rows_with_empty_c0040.iterrows():
-                logger.info(f"B_06.01: Rad {index} - c0040 er tom, setter verdi til '{fill_value}'.")
+                clogger.info(f"B_06.01: Rad {index} - c0040 er tom, setter verdi til '{fill_value}'.")
             df['c0040'].fillna(fill_value, inplace=True)
 
         # Kombiner c0010 og c0040 for å sikre at det er unikt per rad
-        logger.info(f"B_06.01: Oppretter kombinasjonsfelt 'c0010_c0040_combination' for å identifisere duplikater.")
+        clogger.info(f"B_06.01: Oppretter kombinasjonsfelt 'c0010_c0040_combination' for å identifisere duplikater.")
         df['c0010_c0040_combination'] = df['c0010'] + df['c0040']
 
         # Sjekk for duplikater i kombinasjonen c0010 + c0040
         duplicates = df[df.duplicated(subset=['c0010_c0040_combination'], keep=False)]
 
         if not duplicates.empty:
-            logger.info(f"B_06.01: Duplikater funnet i kombinasjonen 'c0010 + c0040':")
-            logger.info(duplicates[['c0010', 'c0040', 'c0010_c0040_combination']])
+            clogger.info(f"B_06.01: Duplikater funnet i kombinasjonen 'c0010 + c0040':")
+            clogger.info(f"B_06.01: {duplicates[['c0010', 'c0040', 'c0010_c0040_combination']]}")
 
             # Hvis du ønsker å fjerne duplikater, kan vi gjøre dette
             for index, row in duplicates.iterrows():
-                logger.info(f"B_06.01: Rad {index} - duplikat av kombinasjonen c0010 ('{row['c0010']}') + c0040 ('{row['c0040']}'), beholder kun første forekomst.")
+                clogger.info(f"B_06.01: Rad {index} - duplikat av kombinasjonen c0010 ('{row['c0010']}') + c0040 ('{row['c0040']}'), beholder kun første forekomst.")
             df = df.drop_duplicates(subset=['c0010_c0040_combination'], keep='first')
 
         # Lagre den rensede filen til midlertidig output-filbane
         temp_output_file_path = f"{input_file_path}.temp"
         df.to_csv(temp_output_file_path, index=False)
 
-        logger.info(f"Filen er renset og lagret som: {temp_output_file_path}")
+        clogger.info(f"B_06.01: Filen er renset og lagret som: {temp_output_file_path}")
 
         # Slett original fil etter rensing
         os.remove(input_file_path)
-        logger.info(f"Originalfilen {input_file_path} er slettet.")
+        clogger.info(f"B_06.01: Originalfilen {input_file_path} er slettet.")
 
         # Gi den rensede filen originalt navn
         os.rename(temp_output_file_path, input_file_path)
-        logger.info(f"Renset fil er omdøpt tilbake til {input_file_path}")
+        clogger.info(f"B_06.01: Renset fil er omdøpt tilbake til {input_file_path}")
     
     except Exception as e:
         print(f"Feil ved behandling av fil {input_file_path}: {e}")
