@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 import logging
 
-def fix_07_01(input_file_path, logger):
+def fix_07_01(input_file_path, logger, clogger=None):
     try:
         # Les inn CSV-filen
         df = pd.read_csv(input_file_path)

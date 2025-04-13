@@ -37,7 +37,7 @@ def process_customer_files_pass2(customer_path_p1, alogger, clogger):
                         # Kjør relevante funksjoner avhengig av filnavn
                         if "01.02" in csv_path:
                             alogger.info(f"Starter fix_01_02 på {csv_path}")
-                            fix_01_02(csv_path, alogger)
+                            fix_01_02(csv_path, alogger, clogger)
 
                         elif "02.01" in csv_path:
                             alogger.info(f"Starter fix_02_01 på {csv_path}")
@@ -49,31 +49,31 @@ def process_customer_files_pass2(customer_path_p1, alogger, clogger):
 
                         elif "03.01" in csv_path:
                             alogger.info(f"Starter fix_03_01 på {csv_path}")
-                            fix_03_01(csv_path, alogger)
+                            fix_03_01(csv_path, alogger, clogger)
 
                         elif "03.02" in csv_path:
                             alogger.info(f"Starter fix_03_02 på {csv_path}")
-                            fix_03_02(csv_path, alogger)
+                            fix_03_02(csv_path, alogger, clogger)
 
                         elif "04.01" in csv_path:
                             alogger.info(f"Starter fix_04_01 på {csv_path}")
-                            fix_04_01(csv_path, alogger)
+                            fix_04_01(csv_path, alogger, clogger)
 
                         elif "05.01" in csv_path:
                             alogger.info(f"Starter fix_05_01 på {csv_path}")
-                            fix_05_01(csv_path, alogger)
+                            fix_05_01(csv_path, alogger, clogger)
 
                         elif "05.02" in csv_path:
                             alogger.info(f"Starter fix_05_02 på {csv_path}")
-                            fix_05_02(csv_path, alogger)
+                            fix_05_02(csv_path, alogger, clogger)
 
                         elif "06.01" in csv_path:
                             alogger.info(f"Starter fix_06_01 på {csv_path}")
-                            fix_06_01(csv_path, alogger)
+                            fix_06_01(csv_path, alogger, clogger)
 
                         elif "07.01" in csv_path:
                             alogger.info(f"Starter fix_07_01 på {csv_path}")
-                            fix_07_01(csv_path, alogger)
+                            fix_07_01(csv_path, alogger, clogger)
 
 
 
@@ -92,16 +92,15 @@ def process_customer_files_pass2(customer_path_p1, alogger, clogger):
                         if "02.02" in csv_path:
                             csv_path_b06 = csv_path.replace("b_02.02", "b_06.01")
                             alogger.info(f"Starter fix_02_02_pass2 på {csv_path}")
-                            fix_02_02_pass2(csv_path, csv_path_b06, alogger)
+                            fix_02_02_pass2(csv_path, csv_path_b06, alogger, clogger)
 
                             csv_path_b0501 = csv_path.replace("b_02.02", "b_05.01")
                             alogger.info(f"Starter fix_02_02_pass3 på {csv_path}")
-                            #fix_02_02_pass3(csv_path, csv_path_b06, alogger)                    
 
                         elif "05.02" in csv_path:
                             csv_path_b0501 = csv_path.replace("b_05.02", "b_05.01")
                             alogger.info(f"Starter fix_05_02_pass2 på {csv_path}")
-                            fix_05_02_pass2(csv_path, csv_path_b0501, alogger)
+                            fix_05_02_pass2(csv_path, csv_path_b0501, alogger, clogger)
 
 
     except Exception as e:

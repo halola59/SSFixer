@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import logging
 
-def fix_05_02(input_file_path, logger):
+def fix_05_02(input_file_path, logger, clogger=None):
     try:
         # Les inn CSV-filen
         df = pd.read_csv(input_file_path)
@@ -51,7 +51,7 @@ def fix_05_02(input_file_path, logger):
 
 
 
-def fix_05_02_pass2(input_file_b0502, input_file_b0501, logger):
+def fix_05_02_pass2(input_file_b0502, input_file_b0501, logger, clogger=None):
     try:
         # Les inn CSV-filene
         df_b0501 = pd.read_csv(input_file_b0501)
