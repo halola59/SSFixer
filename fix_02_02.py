@@ -29,15 +29,18 @@ def fix_02_02(input_file_path, alogger, clogger):
         filtered_df['c0080'] = filtered_df['c0080'].dt.strftime('%Y-%m-%d')
 
         df.update(filtered_df)
-    
+
         # Hvis c0100 er tom, sett verdi = 90
+        rows_with_empty_c0100 = df[df['c0100'].isna()]
+        for index, row in rows_with_empty_c0100.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0100 er tom, setter verdi til 90.")
         df['c0100'] = df['c0100'].fillna(90)
 
         # Fjern leading og trailing spaces fra c0030
-        df['c0030'] = df['c0030'].str.strip()        
+        df['c0030'] = df['c0030'].str.strip()
 
         # Hvis c0110 er tom, sett verdi = c0100
-        df['c0110'] = df['c0110'].fillna(df['c0100'])        
+        df['c0110'] = df['c0110'].fillna(df['c0100'])
 
         # Hvis c0150 er tom og c0140 er tom, kopier verdien fra c0130 til c0150
         df.loc[df['c0150'].isna() & df['c0140'].isna(), 'c0150'] = df['c0130']
@@ -73,7 +76,7 @@ def fix_02_02(input_file_path, alogger, clogger):
         # Gi den rensede filen originalt navn
         os.rename(temp_output_file_path, input_file_path)
         alogger.info(f"Renset fil er omdøpt tilbake til {input_file_path}")
-    
+
     except Exception as e:
         print(f"EXCEPTION - fix_02_02: {input_file_path}: {e}")
 
@@ -93,7 +96,7 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger):
             if not matching_row_b06.empty:
                 # Kopier verdien fra c0050 i b_06.01 til c0140 i b_02.01 (eller annen logikk for kopiering)
                 df_b02.at[index, 'c0140'] = matching_row_b06.iloc[0]['c0050']
-                             
+
         # Finn radene i b_02.02 hvor c0170 er tom (NaN eller tom verdi)
         rows_b02_with_empty_c0170 = df_b02[df_b02['c0170'].isna() | (df_b02['c0170'] == '')]
 
@@ -106,8 +109,8 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger):
                 if c0050_value == "eba_BT:x28":
                     df_b02.at[index, 'c0170'] = "eba_ZZ:x793"
                 elif c0050_value == "eba_BT:x29":
-                    df_b02.at[index, 'c0170'] = "eba_ZZ:x795"                             
-        
+                    df_b02.at[index, 'c0170'] = "eba_ZZ:x795"
+
         # Lagre den rensede b_02.01 filen til midlertidig output-filbane
         temp_output_file_b02 = f"{input_file_b02}.temp"
         df_b02.to_csv(temp_output_file_b02, index=False)
@@ -121,7 +124,7 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger):
         # Gi den rensede b_02.01 filen originalt navn
         os.rename(temp_output_file_b02, input_file_b02)
         alogger.info(f"Renset b_02.01 fil er omdøpt tilbake til {input_file_b02}")
-    
+
     except Exception as e:
         print(f"Feil ved behandling av filene {input_file_b02} og {input_file_b06}: {e}")
 
@@ -153,6 +156,6 @@ def fix_02_02_pass3(input_file_b0202, input_file_b0501, alogger):
         # Gi den rensede b_02_02 filen originalt navn
         os.rename(temp_output_file_b0202, input_file_b0202)
         alogger.info(f"Renset b_02_02 fil er omdøpt tilbake til {input_file_b0202}")
-    
+
     except Exception as e:
         print(f"Feil ved behandling av filene {input_file_b0202} og {input_file_b0501}: {e}")
