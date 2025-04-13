@@ -37,6 +37,9 @@ def fix_02_02(input_file_path, alogger, clogger):
         df['c0100'] = df['c0100'].fillna(90)
 
         # Fjern leading og trailing spaces fra c0030
+        rows_with_spaces_in_c0030 = df[df['c0030'].astype(str).str.strip() != df['c0030'].astype(str)]
+        for index, row in rows_with_spaces_in_c0030.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0030 '{row['c0030']}' har mellomrom, fjerner leading/trailing spaces.")
         df['c0030'] = df['c0030'].str.strip()
 
         # Hvis c0110 er tom, sett verdi = c0100
