@@ -2,6 +2,8 @@ import os
 import pandas as pd
 import logging
 
+from log_utils import CLOG
+
 def fix_05_01(input_file_path, alogger, clogger=None):
     try:
         # Les inn CSV-filen
@@ -10,43 +12,43 @@ def fix_05_01(input_file_path, alogger, clogger=None):
         # Fjern leading og trailing spaces fra c0010
         rows_with_spaces_in_c0010 = df[df['c0010'].astype(str).str.strip() != df['c0010'].astype(str)]
         for index, row in rows_with_spaces_in_c0010.iterrows():
-            clogger.info(f"B_05.01: Rad {index} - c0010 '{row['c0010']}' har mellomrom, fjerner leading/trailing spaces.")
+            CLOG(clogger, "B_05.01", index, f"c0010 '{row['c0010']}' har spaces", "Fjerner leading/trailing spaces")
         df['c0010'] = df['c0010'].str.strip()
 
         # Fjern alle duplikatrader
         duplicate_rows = df[df.duplicated(keep=False)]
         for index, row in duplicate_rows.iterrows():
-            clogger.info(f"B_05.01: Rad {index} - duplikatrad, sletter duplikatet.")
+            CLOG(clogger, "B_05.01", index, "Raden er duplikatrad", "Sletter raden")   
         df = df.drop_duplicates()
 
         # Hvis c0020 finnes i flere rader, behold den første og fjern påfølgende
         duplicate_c0010_rows = df[df.duplicated(subset='c0010', keep=False)]
         for index, row in duplicate_c0010_rows.iterrows():
-            clogger.info(f"B_05.01: Rad {index} - c0010 '{row['c0010']}' finnes i flere rader, beholder kun første forekomst.")
+            CLOG(clogger, "B_05.01", index, f"{row['c0010']}' finnes i flere rader", "Sletter raden, beholder kun en forekomst")   
         df = df.drop_duplicates(subset='c0010', keep='first')
 
         # Oppdater c0020 hvis den er 'eba_qCO:qx2003', sett den til 'eba_qCO:qx2002'
         rows_to_update_c0020 = df[df['c0020'] == 'eba_qCO:qx2003']
         for index, row in rows_to_update_c0020.iterrows():
-            clogger.info(f"B_05.01: Rad {index} - c0020 er 'eba_qCO:qx2003', endrer til 'eba_qCO:qx2002'.")
+            CLOG(clogger, "B_05.01", index, "c0020 = 'eba_qCO:qx2003'", "Setter ny verdi til 'eba_qCO:qx2002'") 
         df.loc[df['c0020'] == 'eba_qCO:qx2003', 'c0020'] = 'eba_qCO:qx2002'
 
         # Sett c0070 til "eba_CT:x212" hvis c0070 er tom (NaN eller tom verdi)
         rows_with_empty_c0070 = df[df['c0070'].isna() | (df['c0070'] == '')]
         for index, row in rows_with_empty_c0070.iterrows():
-            clogger.info(f"B_05.01: Rad {index} - c0070 er tom, setter verdi til 'eba_CT:x212'.")
+            CLOG(clogger, "B_05.01", index, "c0070 er tom", "Setter ny verdi til 'eba_CT:x212'") 
         df['c0070'] = df['c0070'].fillna('eba_CT:x212')
 
         # Sjekk om c0110 er tom, hvis ja, sett den til verdien i c0010
         rows_with_empty_c0110 = df[df['c0110'].isna()]
         for index, row in rows_with_empty_c0110.iterrows():
-            clogger.info(f"B_05.01: Rad {index} - c0110 er tom, kopierer verdi fra c0010 ('{row['c0010']}').")
+            CLOG(clogger, "B_05.01", index, "c0110 er tom", f"Kopierer verdi fra c0010 ('{row['c0010']}')") 
         df['c0110'] = df['c0110'].fillna(df['c0010'])
 
         # Hvis c0100 er tom, sett verdi = 0
         rows_with_empty_c0100 = df[df['c0100'].isna()]
         for index, row in rows_with_empty_c0100.iterrows():
-            clogger.info(f"B_05.01: Rad {index} - c0100 er tom, setter verdi til 0.")
+            CLOG(clogger, "B_05.01", index, "c0100 er tom", f"Setter verdien til 0")             
         df['c0100'] = df['c0100'].fillna(0)
 
         # Lagre den rensede filen til midlertidig output-filbane

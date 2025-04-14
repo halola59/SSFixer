@@ -21,6 +21,17 @@ def create_logger(logfile_path, name):
     return logger
 
 
+def create_clogger(logfile_path, name):
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
+    if not logger.handlers:
+        handler = logging.FileHandler(logfile_path)
+        formatter = logging.Formatter(f'%(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    return logger
+
+
 def setup_customer_environment(customer_input_file):
     if not customer_input_file.endswith(".zip"):
         raise ValueError("Inputfilen må være en .zip-fil")
@@ -55,7 +66,7 @@ def setup_customer_environment(customer_input_file):
 
     # Lag loggere
     audit_logger = create_logger(os.path.join(log_dir, "audit.log"), f"audit_{customer_name}")
-    change_logger = create_logger(os.path.join(log_dir, "change.log"), f"change_{customer_name}")
+    change_logger = create_clogger(os.path.join(log_dir, "changelog.txt"), f"change_{customer_name}")
 
     return {
         "customer_name": customer_name,
@@ -114,8 +125,8 @@ def process_customer(context):
     process_customer_files_pass2(context["res_dir"], alogger, clogger)
 
     # ---------- PASS 3 ----------
-    alogger.info(f"***** Starter prosessering av {context['org_dir']} - PASS 3")
-    process_customer_files_pass3(context["res_dir"], alogger, clogger)
+    #alogger.info(f"***** Starter prosessering av {context['org_dir']} - PASS 3")
+    #process_customer_files_pass3(context["res_dir"], alogger, clogger)
 
     # ---------- ZIP RESULTAT ----------
     # Ny: pakker innholdet i res/ inn i <customer>/... i zip

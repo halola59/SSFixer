@@ -2,22 +2,24 @@ import os
 import pandas as pd
 import logging
 
+from log_utils import CLOG
+
 def fix_03_02(input_file_path, alogger, clogger=None):
     try:
         # Les inn CSV-filen
         df = pd.read_csv(input_file_path)
 
-        # Fjern leading og trailing spaces fra c0020
-        rows_with_spaces_in_c0020 = df[df['c0020'].astype(str).str.strip() != df['c0020'].astype(str)]
-        for index, row in rows_with_spaces_in_c0020.iterrows():
-            clogger.info(f"B_03.02: Rad {index} - c0020 '{row['c0020']}' har mellomrom, fjerner leading/trailing spaces.")
-        df['c0020'] = df['c0020'].str.strip()
-
         # Fjern linjer der c0020 er tom (NaN eller tom verdi)
         rows_with_empty_c0020 = df[df['c0020'].isna() | (df['c0020'] == '')]
         for index, row in rows_with_empty_c0020.iterrows():
-            clogger.info(f"B_03.02: Rad {index} - c0020 er tom, sletter raden.")
+            CLOG(clogger, "B_03.02", index, f"c0020 er tom", "Sletter raden")     
         df_cleaned = df[df['c0020'].notna() & (df['c0020'] != '')]
+
+        # Fjern leading og trailing spaces fra c0020
+        rows_with_spaces_in_c0020 = df[df['c0020'].astype(str).str.strip() != df['c0020'].astype(str)]
+        for index, row in rows_with_spaces_in_c0020.iterrows():
+            CLOG(clogger, "B_03.02", index, f"c0020 '{row['c0020']}' har spaces", "Fjerner leading/trailing spaces i c0020")            
+        df['c0020'] = df['c0020'].str.strip()
 
         # Lagre den rensede filen til midlertidig output-filbane
         temp_output_file_path = f"{input_file_path}.temp"

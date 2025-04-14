@@ -13,6 +13,7 @@ from fix_05_02 import fix_05_02
 from fix_05_02 import fix_05_02_pass2
 from fix_06_01 import fix_06_01
 from fix_07_01 import fix_07_01
+from log_utils import CLOG
 
 def process_customer_files_pass2(customer_path_p1, alogger, clogger):
     """
@@ -21,6 +22,7 @@ def process_customer_files_pass2(customer_path_p1, alogger, clogger):
     """
     try:
         alogger.info(f"Prosessering av {customer_path_p1} - PASS 2a")
+        CLOG(clogger, "File","Row","Condition","Action")
         
         # Iterer gjennom alle filene i både META-INF og reports underkataloger
         for subfolder in ['META-INF', 'reports']:
@@ -105,4 +107,5 @@ def process_customer_files_pass2(customer_path_p1, alogger, clogger):
 
     except Exception as e:
         alogger.error(f"Feil ved prosessering av katalog {customer_path_p1}: {e}")
+
 

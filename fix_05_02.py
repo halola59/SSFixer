@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import logging
 
+from log_utils import CLOG
+
 def fix_05_02(input_file_path, alogger, clogger=None):
     try:
         # Les inn CSV-filen
@@ -10,26 +12,27 @@ def fix_05_02(input_file_path, alogger, clogger=None):
         # Fjern leading og trailing spaces fra c0030
         rows_with_spaces_in_c0030 = df[df['c0030'].astype(str).str.strip() != df['c0030'].astype(str)]
         for index, row in rows_with_spaces_in_c0030.iterrows():
-            clogger.info(f"B_05.02: Rad {index} - c0030 '{row['c0030']}' har mellomrom, fjerner leading/trailing spaces.")
+            CLOG(clogger, "B_05.02", index, f"c0030 '{row['c0030']}' har spaces", "Fjerner leading/trailing spaces")
         df['c0030'] = df['c0030'].str.strip()
         
         # Fjern leading og trailing spaces fra c0060
         rows_with_spaces_in_c0060 = df[df['c0060'].astype(str).str.strip() != df['c0060'].astype(str)]
         for index, row in rows_with_spaces_in_c0060.iterrows():
-            clogger.info(f"B_05.02: Rad {index} - c0060 '{row['c0060']}' har mellomrom, fjerner leading/trailing spaces.")
+            CLOG(clogger, "B_05.02", index, f"c0060 '{row['c0060']}' har spaces", "Fjerner leading/trailing spaces")
         df['c0060'] = df['c0060'].str.strip()
         
         # Fjern linjer der c0020 eller c0030 er tomme (NaN eller tom verdi)
         rows_with_empty_c0020_or_c0030 = df[(df['c0020'].isna() | (df['c0020'] == '')) | (df['c0030'].isna() | (df['c0030'] == ''))]
         for index, row in rows_with_empty_c0020_or_c0030.iterrows():
-            clogger.info(f"B_05.02: Rad {index} - c0020 eller c0030 er tom, sletter raden.")
+            CLOG(clogger, "B_05.02", index, f"c0020 eller c0030 er tom", "Sletter raden")
+
         df_cleaned = df[df['c0020'].notna() & (df['c0020'] != '') & df['c0030'].notna() & (df['c0030'] != '')]
 
         # Sjekk at c0050 er fylt ut når c0030 og c0060 matcher
         for i, row in df_cleaned.iterrows():
             if row['c0030'] == row['c0060'] and pd.isna(row['c0050']):
                 # Hvis c0030 og c0060 er like, må c0050 være fylt ut
-                clogger.info(f"B_05.02: Rad {i} - c0030 ('{row['c0030']}') og c0060 ('{row['c0060']}') er like, men c0050 er tom. Setter c0050 til 'Default_Value'.")
+                CLOG(clogger, "B_05.02", index, f"c0030 ('{row['c0030']}') og c0060 ('{row['c0060']}') er like, men c0050 er tom", "Setter c0050 til 'Default_Value'")
                 df_cleaned.loc[i, 'c0050'] = "Default_Value"  # Sett en standardverdi hvis ønskelig, ellers kan du fjerne linjen
 
         # Lagre den rensede filen til midlertidig output-filbane
