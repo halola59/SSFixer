@@ -45,8 +45,11 @@ def fix_06_01(input_file_path, alogger, clogger=None):
             # Hvis du ønsker å fjerne duplikater, kan vi gjøre dette
             for index, row in duplicates.iterrows():
                 clogger.info(f"B_06.01: Rad {index} - duplikat av kombinasjonen c0010 ('{row['c0010']}') + c0040 ('{row['c0040']}'), beholder kun første forekomst.")
-            df = df.drop_duplicates(subset=['c0010_c0040_combination'], keep='first')
+            df = df.drop_duplicates(subset=['c0010_c0040_combination'])
 
+         # ❗ Fjern hjelpekolonnen før lagring
+        df.drop(columns=["c0010_c0040_combination"], inplace=True)
+ 
         # Lagre den rensede filen til midlertidig output-filbane
         temp_output_file_path = f"{input_file_path}.temp"
         df.to_csv(temp_output_file_path, index=False)

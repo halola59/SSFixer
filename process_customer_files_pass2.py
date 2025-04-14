@@ -90,9 +90,9 @@ def process_customer_files_pass2(customer_path_p1, alogger, clogger):
                         alogger.info(f"Prosesserer fil: {filename}")
 
                         if "02.02" in csv_path:
-                            csv_path_b06 = csv_path.replace("b_02.02", "b_06.01")
+                            csv_path_b0601 = csv_path.replace("b_02.02", "b_06.01")
                             alogger.info(f"Starter fix_02_02_pass2 på {csv_path}")
-                            fix_02_02_pass2(csv_path, csv_path_b06, alogger, clogger)
+                            fix_02_02_pass2(csv_path, csv_path_b0601, alogger, clogger)
 
                             csv_path_b0501 = csv_path.replace("b_02.02", "b_05.01")
                             alogger.info(f"Starter fix_02_02_pass3 på {csv_path}")

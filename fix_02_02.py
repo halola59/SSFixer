@@ -42,25 +42,37 @@ def fix_02_02(input_file_path, alogger, clogger):
             clogger.info(f"B_02.02: Rad {index} - c0030 '{row['c0030']}' har mellomrom, fjerner leading/trailing spaces.")
         df['c0030'] = df['c0030'].str.strip()
 
+        # Fjern leading og trailing spaces fra c0050
+        rows_with_spaces_in_c0050 = df[df['c0050'].astype(str).str.strip() != df['c0050'].astype(str)]
+        for index, row in rows_with_spaces_in_c0050.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0050 '{row['c0050']}' har mellomrom, fjerner leading/trailing spaces.")
+        df['c0050'] = df['c0050'].str.strip()
+
         # Hvis c0110 er tom, sett verdi = c0100
         rows_with_empty_c0110 = df[df['c0110'].isna()]
         for index, row in rows_with_empty_c0110.iterrows():
             clogger.info(f"B_02.02: Rad {index} - c0110 er tom, setter verdi til c0100 ({row['c0100']}).")
         df['c0110'] = df['c0110'].fillna(df['c0100'])
 
-        # Hvis c0150 er tom og c0140 er tom, kopier verdien fra c0130 til c0150
-        rows_with_empty_c0150_c0140 = df[df['c0150'].isna() & df['c0140'].isna()]
-        for index, row in rows_with_empty_c0150_c0140.iterrows():
-            clogger.info(f"B_02.02: Rad {index} - c0150 og c0140 er tomme, kopierer verdi fra c0130 ({row['c0130']}) til c0150.")
-        df.loc[df['c0150'].isna() & df['c0140'].isna(), 'c0150'] = df['c0130']
+        # Finn rader der c0140 er tom (NaN eller tom streng)
+        condition = df['c0140'].isna() | (df['c0140'].astype(str).str.strip() == '')
+        rows_to_update = df[condition]
+        for index, row in rows_to_update.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0140 er tom, setter verdi til 'eba_BT:x29'.")
+        df.loc[condition, 'c0140'] = 'eba_BT:x29'
 
         # Finn radene der c0140 er 'eba_BT:x29' og c0150 er tom
         condition = (df['c0140'] == 'eba_BT:x29') & (df['c0150'].isna() | (df['c0150'] == ''))
         rows_to_set_not_applicable = df[condition]
         for index, row in rows_to_set_not_applicable.iterrows():
-            clogger.info(f"B_02.02: Rad {index} - c0140 er 'eba_BT:x29' og c0150 er tom, setter c0150 til 'eba_GA:x28'.")
-
-        df.loc[condition, 'c0150'] = 'eba_GA:x28'
+            clogger.info(f"B_02.02: Rad {index} - c0140 er 'eba_BT:x29' og c0150 er tom, setter c0150 til 'eba_GA:qx2007'.")
+        df.loc[condition, 'c0150'] = 'eba_GA:qx2007'
+        
+        # Hvis c0150 er tom og c0140 er tom, kopier verdien fra c0130 til c0150
+        rows_with_empty_c0150_c0140 = df[df['c0150'].isna() & df['c0140'].isna()]
+        for index, row in rows_with_empty_c0150_c0140.iterrows():
+            clogger.info(f"B_02.02: Rad {index} - c0150 og c0140 er tomme, kopierer verdi fra c0130 ({row['c0130']}) til c0150.")
+        df.loc[df['c0150'].isna() & df['c0140'].isna(), 'c0150'] = df['c0130']
 
         # Hvis c0160 er tom, kopier verdien fra c0130 til c0160
         rows_with_empty_c0160 = df[df['c0160'].isna()]
@@ -104,11 +116,11 @@ def fix_02_02(input_file_path, alogger, clogger):
         print(f"EXCEPTION - fix_02_02: {input_file_path}: {e}")
 
 
-def fix_02_02_pass2(input_file_b02, input_file_b06, alogger, clogger=None):
+def fix_02_02_pass2(input_file_b02, input_file_b0601, alogger, clogger=None):
     try:
         # Les inn CSV-filene
         df_b02 = pd.read_csv(input_file_b02)
-        df_b06 = pd.read_csv(input_file_b06)
+        df_b0601 = pd.read_csv(input_file_b0601)
 
         # Finn radene i b_02.01 hvor c0140 er tom
         alogger.info(f"B_02.02_pass2: Finner rader hvor c0140 er tom")
@@ -119,7 +131,7 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger, clogger=None):
             
         # For hver rad med tom c0140 i b_02.01, fyll den med verdien fra b_06.01
         for index, row in rows_b02_with_empty_c0140.iterrows():
-            matching_row_b06 = df_b06[df_b06['c0010'] == row['c0050']]  # Forbindelsen mellom b_06 og b_02 er via hhv c0010 og c0050
+            matching_row_b06 = df_b0601[df_b0601['c0010'] == row['c0050']]  # Forbindelsen mellom b_06.01 og b_02.02 er via hhv c0010 og c0050
             if not matching_row_b06.empty:
                 # Kopier verdien fra c0050 i b_06.01 til c0140 i b_02.01 (eller annen logikk for kopiering)
                 df_b02.at[index, 'c0140'] = matching_row_b06.iloc[0]['c0050']
@@ -133,7 +145,7 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger, clogger=None):
             
         # For hver rad med tom c0170 i b_02.02, oppdater den med riktig verdi basert på c0100 i b_06.01
         for index, row in rows_b02_with_empty_c0170.iterrows():
-            matching_row_b06 = df_b06[df_b06['c0010'] == row['c0050']]  # Forbindelsen mellom b_06 og b_02 er via c0010 og c0050
+            matching_row_b06 = df_b0601[df_b0601['c0010'] == row['c0050']]  # Forbindelsen mellom b_06 og b_02 er via c0010 og c0050
             if not matching_row_b06.empty:
                 # Sjekk verdien i c0050 i b_06.01 og oppdater c0170 i b_02.02
                 c0050_value = matching_row_b06.iloc[0]['c0050']
@@ -157,7 +169,7 @@ def fix_02_02_pass2(input_file_b02, input_file_b06, alogger, clogger=None):
         alogger.info(f"Renset b_02.01 fil er omdøpt tilbake til {input_file_b02}")
 
     except Exception as e:
-        print(f"EXCEPTION - fix_02_02 {input_file_b02} og {input_file_b06}: {e}")
+        print(f"EXCEPTION - fix_02_02 {input_file_b02} og {input_file_b0601}: {e}")
 
 
 

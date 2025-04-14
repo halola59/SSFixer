@@ -32,6 +32,12 @@ def fix_07_01(input_file_path, alogger, clogger=None):
             clogger.info(f"B_07.01: Rad {index} - c0070 er tom, setter verdi til '9999-12-31'.")
         df_cleaned['c0070'] = df_cleaned['c0070'].fillna('9999-12-31')
 
+        # Hvis c0050 er tom og c0110 = eba_BT:x21, sett c0050 til 'eba_ZZ:x963'
+        rows_with_empty_c0050_and_c0110 = df_cleaned[(df_cleaned['c0050'].isna() | (df_cleaned['c0050'] == '')) & (df_cleaned['c0110'] == 'eba_BT:x21')]
+        for index, row in rows_with_empty_c0050_and_c0110.iterrows():
+            clogger.info(f"B_07.01: Rad {index} - c0050 var tom og c0110 = eba_BT:x21, setter c0050 til 'eba_ZZ:x963'.")
+        df_cleaned.loc[(df_cleaned['c0050'].isna() | (df_cleaned['c0050'] == '')) & (df_cleaned['c0110'] == 'eba_BT:x21'), 'c0050'] = 'eba_ZZ:x963'
+
         # Lagre den rensede filen til midlertidig output-filbane
         temp_output_file_path = f"{input_file_path}.temp"
         df_cleaned.to_csv(temp_output_file_path, index=False)

@@ -2,24 +2,26 @@ import os
 import shutil
 import logging
 
-def process_customer_files_pass1(customer_path, customer_path_p1, alogger, clogger):
+def process_customer_files_pass1(org_path, res_path, alogger, clogger):
     """
     Lager en kopi av katalogen, fjerner tomme linjer og duplikater fra filene,
     og lagrer dem i den nye katalogen.
     """
 
     try:
-        # Sørg for at hovedmappen til customer_path_p1 eksisterer
-        os.makedirs(customer_path_p1, exist_ok=True)
+        alogger.info(f"process_customer_files_pass1: {org_path} -> {res_path}")
+    
+        # Sørg for at hovedmappen til res_path eksisterer
+        os.makedirs(res_path, exist_ok=True)
 
         # Iterer gjennom alle filene i både META-INF og reports underkataloger
         for subfolder in ['META-INF', 'reports']:
-            subfolder_path = os.path.join(customer_path, subfolder)
+            subfolder_path = os.path.join(org_path, subfolder)
 
             # Sjekk at katalogen eksisterer
             if os.path.isdir(subfolder_path):
-                # Lag subfolder i customer_path_p1 hvis den ikke finnes
-                subfolder_output_path = os.path.join(customer_path_p1, subfolder)
+                # Lag subfolder i res_path hvis den ikke finnes
+                subfolder_output_path = os.path.join(res_path, subfolder)
                 os.makedirs(subfolder_output_path, exist_ok=True)
 
                 for filename in os.listdir(subfolder_path):
@@ -34,7 +36,7 @@ def process_customer_files_pass1(customer_path, customer_path_p1, alogger, clogg
                         clean_file(input_file_path, output_file_path, alogger)
 
     except Exception as e:
-        alogger.error(f"Feil ved prosessering av katalog {customer_path}: {e}")
+        alogger.error(f"EXCEPTION: process_customer_files_pass1 - Feil ved prosessering av katalog {org_path}: {e}")
 
 
 def clean_file(input_file_path, output_file_path, alogger):
