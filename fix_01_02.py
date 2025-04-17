@@ -1,7 +1,6 @@
 import os
 import pandas as pd
-from file_utils import clean_file
-from log_utils import CLOG 
+from log_utils import CLOG
 
 
 def fix_01_02(input_file_path, alogger, clogger=None):
@@ -17,7 +16,7 @@ def fix_01_02(input_file_path, alogger, clogger=None):
         # c0110 inneholder spaces foran eller bak
         rows_with_spaces_in_c0110 = df[df['c0110'].astype(str).str.contains(r'\s+')]
         for index, row in rows_with_spaces_in_c0110.iterrows():
-            CLOG(clogger, "B_01.02", index, f"c0110 '{row['c0110']}' har spaces", "Fjerner leading/trailing spaces i c0110")            
+            CLOG(clogger, "B_01.02", index, f"c0110 '{row['c0110']}' har spaces", "Fjerner leading/trailing spaces i c0110")
         df['c0110'] = df['c0110'].replace({r'\s+': ''}, regex=True)
 
         temp_output_file_path = f"{input_file_path}.temp"
